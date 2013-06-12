@@ -1,0 +1,260 @@
+<head>
+  <title>NVCanvas</title>
+</head>
+
+<body>
+  {{> init}}
+</body>
+
+<template name="init">
+  <div id="login" class="content">
+    <h1>Welcome to NVCanvas.</h1>
+    {{loginButtons}}
+    <div id="enter-options" class="clear">
+      <a class="button left" action="create">Create<br>Room</a>
+      <a class="button right" action="join">Join<br>Room</a>
+    </div>
+  </div>
+</template>
+
+<template name='createRoom'>
+  <section class='modal options' data-page='create'>
+    <div class=inner>
+      <form id=options-form>
+        <input type=hidden value=create>
+        <h2>Create Room</h2>
+        <h3>Room Specifics</h3>
+        
+        <fieldset>
+          <label for=rname>Room Name:</label>
+          <input id=rname type=text name=name>
+        </fieldset>
+        
+        <fieldset>
+          <label for=rpassword>Password:</label>
+          <input type=password id=rpassword name=password>
+        </fieldset>
+        
+        <br>
+        <br>
+        <h3>Canvas</h3>
+        
+        <fieldset>
+          <label for=create-width>Width:</label>
+          <input type=number id=create-width value=850 max=2000 name=width>
+        </fieldset>
+        
+        <fieldset>
+          <label for=create-height>Height:</label>
+          <input type=number id=create-height value=600 max=1600 name=height>
+        </fieldset>
+        
+        <fieldset>
+          <label for=color>Background<br>Color:</label>
+          <input id=color type=color name=background value=#ffffff
+        </fieldset>
+        
+        <br>
+        <br>
+        <div class=submit>
+          <input type=submit value=Create class=button>
+        </div>
+      </form>
+      
+      <a class='sprite x-out'></a>
+      
+    </div>
+  </section>
+</template>
+
+<template name='joinRoom'>
+  <section class="modal options" data-page='join'>
+    <div class="inner">
+      <form id="options-form">
+        <input type="hidden" value="join room" class="type">
+        
+        <h2>Join Room</h2>
+        <fieldset>
+          <label for="rname">Room Name:</label>
+          <input id="rname" type="text" name="name">
+        </fieldset>
+        
+        <fieldset>
+          <label for="rpassword">Password:</label>
+          <input id="rpassword" type="password" name="password">
+        </fieldset>
+        <br>
+        <br>
+        <div class="submit">
+          <input type="submit" class="button" value="Join">
+        </div>
+      </form>
+      
+      <a class="sprite x-out"></a>
+    </div>
+  </section>
+</template>
+
+<template name='utilities'>
+  <div id="canvasWrapper">
+    <div id="topPanel">
+      
+      <section id="toolMenu" class="ui-section">
+        {{> toolBlock}}
+      </section>
+      
+      <div id="rightPanel">
+        <section id="screen"></section>
+        <section id="userWindow" class="ui-section">
+          {{> userBlock}}
+        </section>
+      </div><!-- right -->
+    </div><!-- top -->
+    
+    <div class="bottom-section ui-section">
+    
+      {{> videoBlock}}
+      
+      <section id="chatWindow">
+        {{> chatBlock}}
+      </section>
+    </div>
+    
+  </div><!-- wrapper -->
+</template>
+
+<template name='toolBlock'>
+  <div class="inner clear">
+    <div class="title">
+      <div class="label">
+        <h4>Tools</h4>
+      </div>
+    </div>
+    
+    <div class="update">
+      <ul id="tools">
+        {{#each tools}}
+          <li><a class="sprite tool-{{name}}"></a>
+        {{/each}}
+      </ul>
+      
+      <section id="attributes">
+        <div id="stroke-width">
+          <label for="lineWidth">Stroke Width</label>
+          <input id="lineWidth" type="number" value="1">
+        </div>
+        <div id="fill-stroke">
+          <div class="fill selected"></div>
+          <div class="stroke">
+            <div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</template>
+
+<template name='userBlock'>
+  <div class="layers" order="1">
+    <div class="inner clear">
+      <div class="title">
+        <h4>Layers</h4>
+      </div>
+      
+      <div class="update">
+        <div class="guide clear">
+          <a class="sprite mLayer-show" title="Hide this layer"></a>
+          <a class="sprite mLayer-solo" title="Hide all layers except for this one"></a>
+        </div>
+        
+        <ul id="canvas-layers" class="clear">
+          {{#each users}}
+            <li>
+              <a class="sprite layer-show" type="visibility"></a>
+              <a class="sprite layer-blank" type="solo"></a>
+              <span class="layer">{{name}}</span>
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="users" order="2">
+    <div class="inner clear">
+      <div class="title">
+        <h4>Users</h4>
+      </div>
+      
+      <div class="update">
+        <ul id="users">
+          {{#each users}}
+            <li>{{name}}
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="chatBlock">
+  <div class="inner clear">
+    <div class="left">
+      <div class="update">
+        <form id="chat-input">
+          <fieldset>
+            <label>Chat Input</label>
+            <input class="input" type="text">
+          </fieldset>
+          <div class="submit">
+            <input class="button" type="submit">
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <div class="right">
+      <div class="update">
+        <div class="window">
+          <div class="full">
+            <ul>
+              {{#each messages}}
+                <li><span class="name">{{user}}</span>: {{message}}
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="videoBlock">
+  <div class="floating-container">
+    <video autoplay id="main-video"></video>
+  </div>
+  
+  <!-- The bottom window -->
+  <section id="videoWindow">
+    <div class="inner">      
+      <div class="update">
+        <div class="all-videos">
+          {{#each users}}
+            <div class="small-video">
+              <videa autoplay></videa>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+
+
+
+
+
+
+
+

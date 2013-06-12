@@ -1,0 +1,7 @@
+{
+  "packages": {
+    "router": {},
+    "jade-handlebars": {},
+    "observatory": {}
+  }
+}

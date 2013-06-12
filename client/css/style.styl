@@ -1,0 +1,573 @@
+black = #000
+
+//    ----------------------------------------------------------------------------------------------------------------
+//    ----------------------------                  RESET              ----------------------------
+//    ----------------------------------------------------------------------------------------------------------------
+
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary,time, mark, audio, video 
+  margin 0
+  padding 0
+  border 0
+  font-size 100%
+  font inherit
+  vertical-align baseline
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section 
+  display block
+
+body 
+  line-height 1
+
+ol, ul 
+  list-style none
+
+blockquote, q 
+  quotes none
+
+blockquotebefore, blockquoteafter, qbefore, qafter 
+  content ''
+  content none
+
+table 
+  border-collapse collapse
+  border-spacing 0
+
+
+//    ----------------------------------------------------------------------------------------------------------------
+//    ----------------------------                 STYLUS CLASSES              ----------------------------
+//    ----------------------------------------------------------------------------------------------------------------
+
+vendor(prop, args)
+  -webkit-{prop} args
+  -moz-{prop} args
+  -ms-{prop} args
+  -o-{prop} args
+  {prop} args
+
+border-radius()
+  vendor('border-radius', arguments)
+
+appearance()
+  vendor('appearance', arguments)
+
+Gradient(startPoint, startColor, startInterval, endColor, endInterval, deprecatedWebkitStartPoint = false, deprecatedWebkitEndPoint = false)
+  background-color startColor
+  if deprecatedWebkitStartPoint && deprecatedWebkitEndPoint
+    background-image -webkit-gradient(linear, deprecatedWebkitStartPoint, deprecatedWebkitEndPoint, color-stop(startInterval, startColor), color-stop(endInterval, endColor))
+  background-image -webkit-linear-gradient(startPoint, startColor startInterval, endColor endInterval)
+  background-image -moz-linear-gradient(startPoint, startColor startInterval, endColor endInterval)
+  background-image -ms-linear-gradient(startPoint, startColor startInterval, endColor endInterval)
+  background-image -o-linear-gradient(startPoint, startColor startInterval, endColor endInterval)
+  background-image linear-gradient(startPoint, startColor startInterval, endColor endInterval)
+
+text-shadow(color,mode = darken)
+  color color
+  text-shadow 1px 1px 0px mode(color, 35%)
+
+box-shadow()
+  vendor('box-shadow', arguments)
+
+
+
+//    ----------------------------------------------------------------------------------------------------------------
+//    ----------------------------                  CLASSES              ----------------------------
+//    ----------------------------------------------------------------------------------------------------------------
+
+html
+  background black
+  width 100%
+  height 100%
+  font-size 22px
+  
+//    -----
+//                  1 REM = 22PX        (html -> font-size)
+//    -----
+
+body
+  position relative
+  width 100%
+  height 100%
+  font 1.1rem Helvetica
+  padding 0
+  color white
+  background black
+
+.button
+  Gradient(top, #ffffff, 0%, #a9a9a9, 100%)
+  text-shadow(#787878)
+  border-radius(5px)
+
+.left
+  float left
+
+.right
+  float right
+  
+h1 { font-size: 2rem }
+h2 { font-size: 1.25rem }
+h3 { font-size: 1rem }
+h4 { font-size: .8rem }
+h5 { font-size: .5rem }
+
+#login-buttons
+  margin-bottom .5em
+
+fieldset
+  margin-bottom .5rem
+  
+  label
+    color #999
+    font-weight bold
+    font-size 20px
+    line-height 24px
+  
+  input,textarea
+    height 1.25rem
+    padding .15rem .3rem
+    color #333
+    border-radius(5px)
+    border none
+    font-size .8rem
+
+a
+  color #334
+
+
+div.submit
+  text-align center
+
+  input
+    appearance none
+    padding .5rem 2rem
+    font-size 1rem
+    border none
+    cursor pointer
+    height 2.25rem
+
+.modal
+  position absolute
+  height 26rem
+  width 22rem
+  background rgba(25,25,25,.96)
+  border-radius(.5rem)
+  border 1px solid #666
+  top 50%
+  margin-top -13rem
+  left 50%
+  margin-left -11rem
+  
+  .inner
+    position relative
+    padding 1rem
+    
+    h2
+      text-align center
+      margin-bottom 1rem
+    
+    h3
+      text-align center
+      color #ccc
+      margin-bottom .5rem
+    
+    .x-out
+      cursor pointer
+      position absolute
+      right -.5rem
+      top -.5rem
+    
+    fieldset
+      
+      input, textarea
+        float right
+        width 175px
+
+
+//    ----------------------------------------------------------------------------------------------------------------
+//    ----------------------------                  BEGIN              ----------------------------
+//    ----------------------------------------------------------------------------------------------------------------
+
+
+/*  Global content container  */
+.content
+  position relative
+
+#login
+  width 600px
+  height 330px
+  position absolute
+  top 50%
+  margin-top -165px
+  left 50%
+  margin-left -300px
+  
+  h1
+    text-align center
+    margin-bottom 2rem
+  
+  #username
+    padding 10px
+    border-radius(5px)
+    border none
+    font-size 20px
+    float left
+    width 580px
+    height 20px
+    margin-bottom 10px
+  
+  #enter-options
+    
+    a
+      display block
+      cursor pointer
+      font-size 1.1rem
+      width 115px
+      padding 40px 90px
+      text-align center
+    
+    .create
+      float left
+    
+    .join
+      float right
+
+.hsplitbar
+  height .3rem
+  Gradient(top, #232323, 0%, #747474, 100%)
+
+.vsplitbar
+  width .3rem
+  Gradient(right, #232323, 0%, #747474, 100%)
+
+#rightPanel .vsplitbar
+  Gradient(right,#747474 , 0%, #232323, 100%)
+
+//    ----------------------------------------------------------------------------------------------------------------
+//    ----------------------------                  CANVAS              ----------------------------
+//    ----------------------------------------------------------------------------------------------------------------
+
+#canvasWrapper
+  width 100%
+  height 100%
+  overflow hidden
+  text-align center
+  position relative
+  
+  #canvasInner
+    position fixed
+    left 50%
+    top 50%
+    border 1px solid #999
+    cursor crosshair
+    
+    #container
+      position relative
+      width 100%
+      height 100%
+      
+      canvas
+        position absolute
+        top 0
+        left 0
+        
+
+
+//    ----------------------------------------------------------------------------------------------------------------
+//    ----------------------------                  UI SECTION              ----------------------------
+//    ----------------------------------------------------------------------------------------------------------------
+
+.ui-section
+  Gradient(top, #ffffff, 0%, #a9a9a9, 100%)
+  text-align left
+  z-index 11 !important
+  
+  .title
+    width 100%
+    text-align center
+    border-bottom 1px solid #999
+    background rgba(0,0,0,.6)
+    cursor pointer
+    
+    &:hover
+      background rgba(0,0,0,.1)
+      
+      div.label
+        color #333
+    
+    div.label
+      padding 5px 0
+      font-size 1em
+      color #fff
+      font-weight bold
+    
+
+
+//    ----------------------------------------------------------------------------------------------------------------
+//    ----------------------------                  $TOOL  MENU              ----------------------------
+//    ----------------------------------------------------------------------------------------------------------------
+
+#toolMenu
+  
+  ul#tools
+    margin .5rem auto
+    width 4rem
+    
+    li
+      display inline-block
+      
+      a
+        cursor pointer
+        box-shadow(inset 1px 1px 3px rgba(0,0,0,.5))
+      
+      a.selected
+        cursor default
+        
+      
+      
+  
+  #attributes
+    width 4rem
+    margin 0 auto
+    
+    #stroke-width
+      width 2rem
+      height 2rem
+      
+      input
+        width 1.5rem
+        height 1rem
+      
+      label
+        display none
+        width 1rem
+        height 100%
+        font-size .6rem
+        color black
+    
+    #fill-stroke
+      position relative
+      width 2rem
+      height 1.5rem
+      
+      > div
+        width 1rem
+        height 1rem
+        box-shadow(1px 1px 3px rgba(0,0,0,.5))
+        position absolute
+        top .5rem
+        left .5rem
+        z-index 4
+        cursor pointer
+        background #000
+      
+      > .selected
+        z-index 5
+        top 0
+        left 0
+      
+      .stroke
+        padding .25rem
+        width .5rem
+        height .5rem
+          
+        div
+          background #fff
+          width .5rem
+          height .5rem
+      
+  
+
+//    ----------------------------------------------------------------------------------------------------------------
+//    ----------------------------                  USER  WINDOW              ----------------------------
+//    ----------------------------------------------------------------------------------------------------------------
+
+#userWindow
+  
+  .hsplitbar
+    background #eee
+    border 1px solid #999
+    border-left none
+    border-right none
+  
+  .inner
+    width 100%
+    height 100%
+    
+    .update
+      width 100%
+      height 200px
+      
+      .guide
+        width 100%
+        
+        a
+          float left
+          margin 2px 3px
+          
+          &:first-child
+            margin-left 7px
+      
+      ul#canvas-layers
+        width 100%
+        
+        li.active
+          background rgba(0,0,0,.2)
+        
+        li
+          padding 4px
+          cursor pointer
+          height 20px
+          
+          a
+            float left
+            margin-right 3px
+            box-shadow(inset 1px 1px 3px rgba(0,0,0,.5))
+            cursor pointer
+          
+          span
+            display block
+            float left
+            color #333
+            font-weight bold
+            font-size .65rem
+            width 135px
+    
+      ul#users
+        width 100%
+        
+        li
+          padding .25rem .5rem
+          Gradient(top, #ffffff, 0%, #999, 100%)
+          cursor pointer
+          
+          a
+            color #333
+            font-weight bold
+
+
+
+//    ----------------------------------------------------------------------------------------------------------------
+//    ----------------------------                   CHAT  WINDOW                 ----------------------------
+//    ----------------------------------------------------------------------------------------------------------------
+
+#chatWindow
+  display none
+  
+  .inner
+    max-width 900px
+    width 100%
+    min-width 500px
+    margin 0 auto
+    
+    > div
+      margin .5rem
+      
+      > .update
+        padding .25rem
+        height 120px
+        width 420px
+    
+    #chat-input
+      
+      label
+        color #000
+        display block
+        margin-bottom 5px
+      
+      .input
+        width 100%
+        box-shadow(inset 1px 1px 4px #454545)
+      
+      .submit
+        text-align left
+        
+        input
+          font-size .75rem
+          padding 5px 25px
+          box-shadow(1px 1px 4px #454545)
+    
+    .window
+    	overflow-y scroll
+    	text-wrap true
+    	height 100%
+    	width 100%
+    	background #000
+    	box-shadow(1px 1px 10px #454545)
+    	
+    	.full
+    	 color #eee
+    	 padding 5px
+    	 overflow-x hidden
+
+
+//    ----------------------------------------------------------------------------------------------------------------
+//    ----------------------------                  $VIDEO                      ----------------------------
+//    ----------------------------------------------------------------------------------------------------------------
+
+.floating-container
+  position fixed
+  cursor pointer
+  top 1em
+  left 1em
+  z-index 3
+  
+  video
+    width 12em
+    height 8em
+
+#videoWindow
+
+  .inner
+    width 100%
+    min-width 500px
+    padding .5em
+    margin 0 auto
+
+
+
+
+.sprite
+  background url("/images/sprites.png") top left no-repeat
+  display block
+  width 20px
+  height 20px
+  background-position 10px 10px
+
+  
+  
+.tool-eraser.selected{ width:26px; height:26px; background-position:-10px -10px; }
+.tool-eraser{ width:26px; height:26px; background-position:-10px -46px; }
+.tool-pen.selected{ width:26px; height:26px; background-position:-10px -82px; }
+.tool-pen{ width:26px; height:26px; background-position:-10px -118px; }
+.tool-paint.selected{ width:26px; height:26px; background-position:-10px -154px; }
+.tool-paint{ width:26px; height:26px; background-position:-10px -190px; }
+.tool-pencil.selected{ width:26px; height:26px; background-position:-10px -226px; }
+.tool-pencil{ width:26px; height:26px; background-position:-10px -262px; }
+.x-out{ width:26px; height:26px; background-position:-10px -298px; }
+.layer-solo{ width:20px; height:20px; background-position:-10px -334px; }
+.layer-show{ width:20px; height:20px; background-position:-10px -364px; }
+.mLayer-show{ width:15px; height:15px; background-position:-10px -394px; }
+.mLayer-solo{ width:15px; height:15px; background-position:-10px -419px; }
+
+
+
+
+
+
+.clear:after
+  visibility hidden
+  display block
+  font-size 0
+  content " "
+  clear both
+  height 0
+  
+.clear
+  display inline-block
+  clear both
+
+/* start commented backslash hack \*/
+* html .clear
+  height 1%  
+.clear
+  display block
+/* close commented backslash hack */
