@@ -1,19 +1,19 @@
 this.UserList = new Meteor.Collection 'userList'
-this.Rooms = new Meteor.Collection 'rooms'
+this.Room = new Meteor.Collection 'rooms'
 this.Tools = new Meteor.Collection 'tools'
 this.DrawingHistory = new Meteor.Collection 'drawingHistory'
 this.Chat = new Meteor.Collection 'chat'
 
 roomHandle = undefined
-shortcut = true
+shortcut = false
 
-Meteor.subscribe 'rooms'
+
 Meteor.subscribe 'tools'
 
 Deps.autorun ->
-  Meteor.subscribe 'userList' , Session.get 'current_room'
-  Meteor.subscribe 'drawingHistory' , Session.get 'current_room'
-  Meteor.subscribe 'chat' , Session.get 'current_room'
+  Meteor.subscribe 'userList' , Session.get( 'current_room' ) , Session.get( 'room_password' )
+  Meteor.subscribe 'drawingHistory' , Session.get( 'current_room' ) , Session.get( 'room_password' )
+  Meteor.subscribe 'chat' , Session.get( 'current_room' ) , Session.get( 'room_password' )
 
 dialog = ( message ) ->
   alert message
@@ -41,16 +41,14 @@ buildNVCanvas = ( data ) ->
   #  hide everything
   $('#login, section.modal').fadeOut 'fast' , -> $(this).remove()
   
-  Session.set 'current_room' , data.roomId
-  #Session.set 'name' , Meteor.user().profile.name
-  #Session.set 'user_id' , Meteor.userId()
-  
-  #  temporary
-  Session.set 'name' , 'Marius'
-  Session.set 'user_id' , Meteor.uuid()
+  Session.set 'current_room' , data._id
+  Session.set 'room_password' , data.password
+  Session.set 'name' , Meteor.user().profile.name
+  Session.set 'user_id' , Meteor.userId()
   
   UserList.insert
-    roomId: data.roomId
+    roomId: data._id
+    password:data.password
     userId: Session.get 'user_id'
     name: Session.get 'name'
   
@@ -68,7 +66,6 @@ buildNVCanvas = ( data ) ->
 goToRoom = ( e , T ) ->
   e.preventDefault()
   form =
-    roomId:null
     password:null
     width:null
     height:null
@@ -81,32 +78,31 @@ goToRoom = ( e , T ) ->
     form[ i.name ] = i.value
   
   #  Check if the room already exists
-  exists = Rooms.find( { name : form.name , password : form.password } ).fetch()
-  
-  #  if it exists, notify the user
-  if exists.length
-    if page is 'create'
-      dialog 'That Room + Password combination already exists'
-    
-    else if page is 'join'
-      #  build the canvas using the found data
-      buildNVCanvas exists[ 0 ]        
-  
-  #  if no room of that name/pass exists
-  else
-    if page is 'create'
-      form.roomId = Session.get 'user_id' #  set the room creator
+  Meteor.subscribe 'rooms' , form.name , form.password , ( exists ) ->
+    #  if it exists, notify the user
+    if exists = Room.findOne()
+      if page is 'create'
+        dialog 'That Room + Password combination already exists'
       
-      #  push the room to the collection
-      Rooms.insert form , ( error ) ->
-        if not error
-          buildNVCanvas form
-          
-        else
-          console.log error
+      else if page is 'join'
+        #  build the canvas using the found data
+        buildNVCanvas exists
     
+    #  if no room of that name/pass exists
     else
-      dialog 'No room with that name/password combination exists'
+      if page is 'create'
+        
+        #  push the room to the collection
+        roomId = Room.insert form , ( error ) ->
+          if not error
+            form._id = roomId
+            buildNVCanvas form
+            
+          else
+            console.log error
+      
+      else
+        dialog 'No room with that name/password combination exists'
   
   
 
@@ -143,7 +139,8 @@ if shortcut
     evt.initMouseEvent('click',true,true,window,0, 0, 0, 0, 0,false,false,false,false,0,null);
     $('a[action="join"]')[0].dispatchEvent evt
     setTimeout ->
-      $('#rname').val 'shortcut'
+      $('#rname').val 'test'
+      if Math.random() >= .5 then $('#rpassword').val 'test'
       #$('#options-form')[0]._submit() # can't fake submit
     , 250
   , 500

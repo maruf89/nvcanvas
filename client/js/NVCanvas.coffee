@@ -34,8 +34,9 @@ class _NVCanvas
       Tools.insert { name:x } for x of @Tools
     
     @sendObj =
-      sid:@sid
-      room:@data.roomId
+      sid:Session.get 'user_id'
+      roomId:Session.get 'current_room'
+      password:Session.get 'room_password'
     
     #  will store the undo/redo states
     @undo = []
@@ -43,14 +44,6 @@ class _NVCanvas
     
     #  initiate the page splitter
     @distributeUtilites()
-    
-    UserList.find().observe
-      added: ( user ) ->
-        _t.setupCanvas user.userId unless Session.equals 'user_id' , user.userId
-      removed: ( user ) ->
-        1
-    
-    @drawingHistory()
   
   
   
@@ -94,7 +87,16 @@ class _NVCanvas
     
     @initVideo()
   
-  
+    UserList.find().observe
+      added: ( user ) ->
+        _t.setupCanvas user.userId unless Session.equals 'user_id' , user.userId
+      removed: ( user ) ->
+        1
+    
+    @drawingHistory()
+    
+    @garbageCollection()
+    
   
   
 
@@ -403,12 +405,11 @@ class _NVCanvas
       message = input.val()
       input.val ''
       
-      data =
+      data = $.extend
         user: Session.get 'name'
-        userId: Session.get 'user_id'
         message: message
-        room: Session.get 'current_room'
         time: ( new Date() ).getTime()
+        @sendObj
       
       Chat.insert data , ( err ) ->
         if err then console.log 'Error sending chat message'
@@ -626,7 +627,7 @@ class _NVCanvas
       _t.type = new _t.Tools[which] _t.attr, true
     
     # STROKE WIDTH
-    doc.on 'change' , '#lineWidth' , (e) =>
+    doc.on 'change' , '#lineWidth' , ( e ) =>
       @attr.s.lineWidth = ( +e.currentTarget.value - .5 )
     
     # COLOR PICKER FOR STROKE/FILL
@@ -662,7 +663,7 @@ class _NVCanvas
     pcConfig = 
       "iceServers":
         [ { "url": "stun:stun.l.google.com:19302" },
-          { "url": "turn:my_username@<turn_server_ip_address>" , "credential": "my_password" }
+          { "url": "turn:maruf89@173.234.60.109" , "credential": "O3h2Znno#$2"}
         ]
     pc = RTCPeerConnection pcConfig
     
@@ -704,7 +705,7 @@ class _NVCanvas
         'OfferToReceiveAudio': true
         'OfferToReceiveVideo': true
     mainVideo: null
-    removeVideo
+    remoteVideo: null
     signalingChannel: null
     users:[]
 
@@ -719,6 +720,26 @@ class _NVCanvas
   streamVideo: ( stream ) -> 
     #attachMediaStream
     _t.videoSettings.mainVideo[ 0 ].src = URL.createObjectURL stream
+      
+  
+
+  
+#    ----------------------------                   $MISC               ----------------------------
+
+
+  
+  
+  garbageCollection: ->
+    #  Every 10 seconds, check whether there are "dead" canvases
+    Meteor.setInterval ->
+      _.each $('#canvasInner').find( 'canvas' ) , ( canvas ) ->
+        $this = $ canvas
+        id = $this.attr 'id'
+        if ''._ is UserList.findOne( userId: id ) then $this.remove()
+    ,10000
+  
+
+
   
   
 

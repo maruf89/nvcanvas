@@ -133,15 +133,15 @@
     
     <div class="update">
       <ul id="tools">
-        {{#each tools}}
-          <li><a class="sprite tool-{{name}}"></a>
-        {{/each}}
+        {{#foreach tools}}
+          <li><a class="sprite tool-{{name}}{{#if $first}} selected{{/if}}"></a>
+        {{/foreach}}
       </ul>
       
       <section id="attributes">
         <div id="stroke-width">
           <label for="lineWidth">Stroke Width</label>
-          <input id="lineWidth" type="number" value="1">
+          <input id="lineWidth" type="number" value=1 min=0>
         </div>
         <div id="fill-stroke">
           <div class="fill selected"></div>
