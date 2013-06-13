@@ -44,7 +44,8 @@ class _NVCanvas
     
     #  initiate the page splitter
     @distributeUtilites()
-  
+    
+    console.log 'init'
   
   
 
@@ -173,8 +174,8 @@ class _NVCanvas
     move:1
     end:1
   
-  canvasMouseDown: (event) ->
-    @offset = $(@canvas).offset()
+  canvasMouseDown: ( event ) ->
+    @offset = @canvas.offset()
     _x = @offset.left
     _y = @offset.top
     x = event.pageX - _x
@@ -200,7 +201,7 @@ class _NVCanvas
       if err
         console.log 'error storing mousedown canvas event data to drawingHistory'
     
-    @type.mousedown x,y,@
+    @type.mousedown x , y , @ , event
     
     if @Draw.move
       doc.on "mousemove.canvasDraw" , @_canvas , ( e ) =>
@@ -218,7 +219,7 @@ class _NVCanvas
           if err
             console.log 'error storing mousemove canvas event data to drawingHistory'
         
-        @type.mousemove x,y
+        @type.mousemove x , y , e
     
   canvasMouseUp: ( e ) ->
     x = e.pageX - @offset.left
@@ -553,62 +554,115 @@ class _NVCanvas
       
       @attr = attr
       
-      @cX1 = undefined # control points for bezier
-      @cY1 = undefined
-      @cX2 = undefined
-      @cY2 = undefined
+      @s = # start
+        x:null
+        y:null
       
-      @iX = undefined # initial coordinates on path start
-      @iY = undefined
+      @c1 = # control points for bezier
+        x:null
+        y:null
       
-      @closeX = undefined # control points for closing the path
-      @closeY = undefined
+      @c2 =
+        x:null
+        y:null
+      
+      @i = # initial coordinates on path start
+        x:null
+        y:null
+      
+      @close = # control points for closing the path
+        x:null
+        y:null
+      
+      @l = # last post
+        x:null
+        y:null
       
       @draw = false
       
-      @mousedown = (x,y,user) ->
+      @dot = undefined
+      @line = undefined
+      @previousDot = undefined
+      
+      @drawDot = ->
+        @dot = $ '<div class="tool-dot" />'
+        @line = $( '<div class="line" />' ).appendTo @dot
+        
+        @dot.css
+          left: @s.x
+          top: @s.y
+        
+        $('#container').append @dot
+        
+        if @previousDot then @previousDot.removeClass 'hidden'
+          
+      
+      @mousedown = ( x , y , user , e ) ->
         @user = user
-        @sX = x # sX - start x
-        @sY = y
+        @s.x = x # sX - start x
+        @s.y = y
         
         if not @draw 
-          @iX = x
-          @iY = y
+          @i.x = x
+          @i.y = y
         
         _t.defineCanvasStyles @attr, @user
         
-      @mousemove = (x,y) ->
-        # show user the handles
+        if Session.equals 'user_id' , user.sid
+          @drawDot()
         
-      @mouseup = (x,y) ->
+      @mousemove = ( x , y , e ) ->
+        distance = helper.distance( @s , { x:x , y:y } )
         
-        difX = x - @sX
-        difY = y - @sY
+        angle = Math.abs helper.angle( { x:x , y:y } , @s )
+        rotation = "rotate(#{angle}deg)"
+        
+        @line.css
+          width: distance << 1
+          marginLeft: -distance
+          transform: rotation
+          '-wekbit-transform': rotation
+          '-moz-transform': rotation
+        
+      @mouseup = ( x , y , e ) ->
+        
+        difX = x - @s.x
+        difY = y - @s.y
         
         # if not the very first stroke then...
         if @draw
-          @cX2 = @sX - difX
-          @cY2 = @sY - difY
+          @c2.x = @s.x - difX
+          @c2.y = @s.y - difY
           
           @user.ctx.beginPath()
-          @user.ctx.moveTo @lX, @lY
-          @user.ctx.bezierCurveTo @cX1, @cY1, @cX2, @cY2, @sX, @sY
+          @user.ctx.moveTo @l.x, @l.y
+          @user.ctx.bezierCurveTo @c1.x , @c1.y , @c2.x , @c2.y , @s.x , @s.y
           
           @user.ctx.stroke()
           
-          @cX1 = @sX + difX
-          @cY1 = @sY + difY
+          @c1.x = @s.x + difX
+          @c1.y = @s.y + difY
+          @dot.addClass 'hidden'
           
         else
           @draw = true
-          @cX1 = @sX + difX
-          @cY1 = @sY + difY
+          @c1.x = @s.x + difX
+          @c1.y = @s.y + difY
           
-          @closeX = @sX - difX
-          @closeY = @sY - difY
+          @close.x = @s.x - difX
+          @close.y = @s.y - difY
+          @dot.addClass 'initial hidden'
         
-        @lX = @sX
-        @lY = @sY
+        @l.x = @s.x
+        @l.y = @s.y
+        if @previousDot then @previousDot.addClass 'hidden'
+        @previousDot = @dot
+      
+      doc.on 'click' , 'div.tool-dot.initial' , =>
+        @user.ctx.moveTo @l.x , @l.y
+        @user.ctx.lineTo @s.x , @s.y
+        @user.ctx.closePath()
+        @user.ctx.stroke()
       
       this
           

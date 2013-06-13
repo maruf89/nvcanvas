@@ -71,6 +71,7 @@ Meteor.startup ->
       if not Connections.findOne { 'userId' : user.userId }
         Meteor._debug "Connection missing for #{user._id}"
         UserList.remove user._id
+        DrawingHistory.remove { 'userId' : user.userId }
   , 60000
 
 

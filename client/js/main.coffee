@@ -5,7 +5,7 @@ this.DrawingHistory = new Meteor.Collection 'drawingHistory'
 this.Chat = new Meteor.Collection 'chat'
 
 roomHandle = undefined
-shortcut = false
+shortcut = true
 
 
 Meteor.subscribe 'tools'
@@ -43,8 +43,12 @@ buildNVCanvas = ( data ) ->
   
   Session.set 'current_room' , data._id
   Session.set 'room_password' , data.password
-  Session.set 'name' , Meteor.user().profile.name
-  Session.set 'user_id' , Meteor.userId()
+  #Session.set 'name' , Meteor.user().profile.name
+  #Session.set 'user_id' , Meteor.userId()
+  
+  #  temporary
+  Session.set 'name' , 'Marius'
+  Session.set 'user_id' , Meteor.uuid()
   
   UserList.insert
     roomId: data._id
@@ -128,6 +132,22 @@ Template.chatBlock.helpers
   messages: ->
     Chat.find {} , { sort: { time: -1 } }
 
+Template.gaAnalytics.rendered = ->
+  if not window._gaq?
+    window._gaq = []
+    _gaq.push(['_setAccount', 'UA-41737651-1'])
+    _gaq.push(['_trackPageview'])
+    ( ->
+      ga = document.createElement('script');
+      ga.async = true;
+      gajs = '.google-analytics.com/ga.js'
+      ga.src = if 'https:' is document.location.protocol
+        'https://ssl'+gajs
+      else 'http://www'+gajs
+      s = document.getElementsByTagName( 'script' )[0];
+      s.parentNode.insertBefore ga, s
+    )()
+
 keepAlive = ->
   Meteor.setInterval ->
     Meteor.call 'keepalive' , Session.get 'user_id'
@@ -140,7 +160,7 @@ if shortcut
     $('a[action="join"]')[0].dispatchEvent evt
     setTimeout ->
       $('#rname').val 'test'
-      if Math.random() >= .5 then $('#rpassword').val 'test'
+      $('#rpassword').val 'test'
       #$('#options-form')[0]._submit() # can't fake submit
     , 250
   , 500

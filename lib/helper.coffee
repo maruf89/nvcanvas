@@ -6,7 +6,14 @@ root.helper =
       x: center.x
       y: center.y - Math.sqrt( Math.abs(p1.x - center.x) * Math.abs(p1.x - center.x) + Math.abs(p1.y - center.y) * Math.abs(p1.y - center.y) )
       
-    (2 * Math.atan2( p1.y - p0.y, p1.x - p0.x ) ) * 180 / Math.PI
+    helper.toDeg( 2 * Math.atan2( p1.y - p0.y, p1.x - p0.x ) ) + 90
+  
+  #  Accepts 2 points as arguments and returns a distance in px
+  distance: ( a , b ) ->
+    Math.sqrt Math.pow( b.x - a.x , 2 ) + Math.pow( b.y - a.y , 2 )
+  
+  toDeg: ( radian ) ->
+    radian * 180 / Math.PI
 
 LocalCollection.Cursor::distinct = (key, random) ->
   self = this
